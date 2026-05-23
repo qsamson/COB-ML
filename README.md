@@ -8,8 +8,19 @@
 
 A multi-source framework for quantifying human cognitive offloading in AI-integrated professional environments through explainable hybrid learning.
 
-**Authors:** Calvin Nobles, Samson Quaye  
-**Institution:** University of Maryland Global Campus
+---
+
+## Authors
+
+**Calvin Nobles, PhD**  
+Dean and Portfolio Vice President  
+School of Cybersecurity and Information Technology  
+University of Maryland Global Campus (UMGC)
+
+**Samson Quaye**  
+Ph.D. Student  
+Center for Cybersecurity and Forensic Education (C²SAFE)  
+Illinois Institute of Technology
 
 ---
 
@@ -189,8 +200,17 @@ See [LICENSE](LICENSE) file for details.
 
 ## Contact
 
-**Calvin Nobles** – cn8972@gmail.com  
-**Samson Quaye** – squaye@hawk.illinoistech.edu
+**Calvin Nobles, PhD**  
+Dean and Portfolio Vice President  
+School of Cybersecurity and Information Technology  
+University of Maryland Global Campus  
+Email: cn8972@gmail.com
+
+**Samson Quaye**  
+Ph.D. Student  
+Center for Cybersecurity and Forensic Education (C²SAFE)  
+Illinois Institute of Technology  
+Email: squaye@hawk.illinoistech.edu
 
 For questions about the framework or datasets, please open an issue or contact the authors directly.
 
