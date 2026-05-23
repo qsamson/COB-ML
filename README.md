@@ -1,291 +1,200 @@
 # COB-ML: Cognitive Offloading Behavioral Machine Learning
 
-**Official repository for the IEEE Access paper:**  
-*"Quantifying Human Cognitive Offloading in AI-Integrated Professional Environments Through Explainable Hybrid Learning"*
+A multi-source framework for quantifying human cognitive offloading in AI-integrated professional environments through explainable hybrid learning.
 
-**Authors:** Calvin Nobles and Samson Quaye  
-**Affiliation:** University of Maryland Global Campus, USA  
-**Published:** IEEE Access, 2025
-
-[![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
-[![Paper](https://img.shields.io/badge/Paper-IEEE%20Access-blue)](LINK_TO_PAPER)
+**Authors:** Calvin Nobles, Samson Quaye  
+**Institution:** University of Maryland Global Campus
 
 ---
 
-## 📄 Abstract
+## Overview
 
-The integration of AI tools into professional knowledge work has created a critical measurement gap: organizations track AI adoption but cannot distinguish adaptive cognitive support from maladaptive dependency. This paper introduces **COB-ML**, a multi-source, physiologically validated framework for quantifying human cognitive offloading in AI-integrated professional environments.
+COB-ML introduces a behavioral measurement framework that distinguishes adaptive cognitive support from maladaptive dependency in AI-assisted professional work. The framework combines a six-layer behavioral feature architecture with a three-branch stacking ensemble trained across five real-world datasets.
 
-COB-ML combines:
-- **Six-layer behavioral feature architecture** operationalizing cognitive offloading from naturalistic interaction traces
-- **Three-branch stacking ensemble** unifying fine-tuned language models, gradient-boosted tabular models, and sequential deep learning
-- **Physiological construct validation** against WESAD stress labels and STEW EEG workload measures
-
-### Key Findings
-
-✅ **Behavioral proxies outperform demographic baselines** by ΔF1 = +0.372  
-✅ **Cross-domain Macro-F1 of 0.762** across five real-world datasets  
-✅ **Physiological construct validation**: ICC(A,1) = 0.611 (WESAD), ICC(A,1) = 0.964 (STEW)  
-✅ **Trust disposition—not usage frequency—is the dominant predictor** of maladaptive offloading (SHAP confirmed, rank stability ρ = 1.000)
+**Key Contributions:**
+- 6-layer behavioral feature architecture operationalizing cognitive offloading from interaction traces
+- 3-branch hybrid ensemble unifying semantic, tabular, and sequential modeling
+- Physiological validation against WESAD stress data and STEW EEG workload measures
+- Evidence that trust disposition, not usage frequency, predicts maladaptive offloading
 
 ---
 
-## 📊 Datasets
+## Datasets
 
-COB-ML was evaluated across **five real-world datasets** comprising:
-- **70,673** labeled survey records
-- **1,837,989** AI conversation logs  
-- **69,362** physiological measurement windows
-
-### Dataset Summary
-
-| Dataset | Purpose | Size | Access |
+| Dataset | Records | Type | Source |
 |---------|---------|------|--------|
-| **Stack Overflow Developer Survey** (2024–2025) | Training | 70,673 records | [Stack Overflow](https://survey.stackoverflow.co/) |
-| **WildChat-1M** | Training | 837,989 conversations | [HuggingFace](https://huggingface.co/datasets/allenai/WildChat-1M) |
-| **LMSYS-Chat-1M** | Training | 1,000,000 conversations | [HuggingFace](https://huggingface.co/datasets/lmsys/lmsys-chat-1m) |
-| **WESAD** (Wearable Stress and Affect Detection) | Validation | 55,154 windows | [Ubiquitous Computing](https://uni-siegen.sciebo.de/s/pYjSgfOVs6Ntahr) |
-| **STEW** (Simultaneous Task EEG Workload) | Validation | 14,208 windows | [IEEE DataPort](https://dx.doi.org/10.21227/44r8-ya50) |
+| Stack Overflow Survey | 70,673 | Behavioral survey | [stackoverflow.co](https://survey.stackoverflow.co/) |
+| WildChat-1M | 837,989 | ChatGPT conversations | [HuggingFace](https://huggingface.co/datasets/allenai/WildChat-1M) |
+| LMSYS-Chat-1M | 1,000,000 | Multi-model conversations | [HuggingFace](https://huggingface.co/datasets/lmsys/lmsys-chat-1m) |
+| WESAD | 55,154 | Physiological (stress) | [Download](https://uni-siegen.sciebo.de/s/pYjSgfOVs6Ntahr/download) |
+| STEW | 14,208 | EEG (workload) | [IEEE DataPort](https://dx.doi.org/10.21227/44r8-ya50) |
 
-**See [`DATA_AVAILABILITY.md`](DATA_AVAILABILITY.md) for detailed data access instructions.**
+See [DATA_AVAILABILITY.md](DATA_AVAILABILITY.md) for detailed access instructions.
 
 ---
 
-## 🏗️ Architecture
+## Framework Architecture
 
-### Six-Layer Behavioral Feature Architecture
+### 6-Layer Feature Engineering
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ Layer 1: Participant Attributes                            │
-│  EdLevel, YearsCode, WorkExp, DevType, OrgSize, ICorPM    │
-├─────────────────────────────────────────────────────────────┤
-│ Layer 2: Work Context                                      │
-│  RemoteWork, Employment, Industry, JobSat                  │
-├─────────────────────────────────────────────────────────────┤
-│ Layer 3: Task Properties                                   │
-│  AIComplex, ToolCountWork, ai_complex_avoidance           │
-├─────────────────────────────────────────────────────────────┤
-│ Layer 4: AI System Characteristics                         │
-│  model_tier, AISelect, AIToolCurrently                     │
-├─────────────────────────────────────────────────────────────┤
-│ Layer 5: Interaction Traces (KEY LAYER)                   │
-│  num_user_turns, single_turn, length_ratio,               │
-│  trust_verification_flag, human_help_count                 │
-├─────────────────────────────────────────────────────────────┤
-│ Layer 6: Human Factors States                             │
-│  ai_trust_score, ai_sentiment, ai_threat_perceived,       │
-│  ai_full_dependency, frustration_count                     │
-└─────────────────────────────────────────────────────────────┘
-```
+1. **Participant Attributes** - Demographics, professional experience
+2. **Work Context** - Organization size, role, remote work status
+3. **Task Properties** - Complexity ratings, avoidance behaviors
+4. **AI System Characteristics** - Model tiers, tool usage patterns
+5. **Interaction Traces** - Verification behavior, dependency indicators
+6. **Human Factors** - Trust, sentiment, threat perception
 
-### Three-Branch Stacking Ensemble
+### 3-Branch Ensemble
 
 ```
-┌──────────────┐  ┌──────────────┐  ┌──────────────┐
-│ Branch A     │  │ Branch B     │  │ Branch C     │
-│ Semantic     │  │ Tabular      │  │ Sequential   │
-├──────────────┤  ├──────────────┤  ├──────────────┤
-│ RoBERTa      │  │ XGBoost      │  │ LSTM         │
-│ (fine-tuned) │  │ TabNet       │  │ 1D-CNN       │
-└──────┬───────┘  └──────┬───────┘  └──────┬───────┘
-       │                 │                 │
-       └─────────────────┼─────────────────┘
-                         ▼
-               ┌──────────────────┐
-               │ Meta-Learner     │
-               │ (Logistic Reg)   │
-               └──────────────────┘
-                         │
-                         ▼
-                    COI Prediction
+┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+│   Branch A      │  │   Branch B      │  │   Branch C      │
+│   (Semantic)    │  │   (Tabular)     │  │  (Sequential)   │
+├─────────────────┤  ├─────────────────┤  ├─────────────────┤
+│ RoBERTa         │  │ XGBoost         │  │ LSTM            │
+│ Conversation    │  │ + TabNet        │  │ + 1D-CNN        │
+│ embeddings      │  │ Survey features │  │ Physiological   │
+└────────┬────────┘  └────────┬────────┘  └────────┬────────┘
+         │                    │                    │
+         └────────────────────┴────────────────────┘
+                              │
+                    ┌─────────▼─────────┐
+                    │   Meta-Learner    │
+                    │   (Logistic Reg)  │
+                    └─────────┬─────────┘
+                              │
+                         COI Prediction
 ```
 
 ---
 
-## 🚀 Reproduction Instructions
+## Installation
 
-### Prerequisites
+### Requirements
 
-- **Python:** 3.10+
-- **GPU:** CUDA-enabled GPU recommended (experiments ran on Google Colab A100)
-- **RAM:** 16GB minimum
+- Python ≥ 3.9
+- PyTorch ≥ 2.0 (CUDA recommended)
+- 16GB+ RAM for full dataset processing
 
-### Installation
+### Setup
 
+**Using Conda:**
 ```bash
-# Clone the repository
-git clone https://github.com/YOUR_USERNAME/COB-ML-IEEE-Access.git
-cd COB-ML-IEEE-Access
-
-# Create virtual environment
+git clone https://github.com/qsamson/COB-ML.git
+cd COB-ML
 conda env create -f environment.yml
 conda activate cobml
+```
 
-# OR using pip
+**Using pip:**
+```bash
+git clone https://github.com/qsamson/COB-ML.git
+cd COB-ML
 pip install -r requirements.txt
 ```
 
-### Running the Experiments
+---
 
-The full experimental pipeline is provided in the Jupyter notebook:
+## Usage
 
-```bash
-jupyter notebook notebooks/COB_ML_Experiments.ipynb
-```
-
-### Reproducing Key Results
-
-#### H1: Behavioral Features vs. Occupation-Only Baseline
+### Load Data
 
 ```python
-# Expected output:
-# Behavioral F1: 0.575±0.004
-# Occupation-only F1: 0.375±0.003
-# ΔF1 = +0.200 (threshold: 0.15 ✓)
+from src.data_loading import load_all_datasets
+
+datasets = load_all_datasets(load_so=True)
+df = datasets['stack_overflow']
 ```
 
-#### H2: Trust Verification as Dominant Predictor
+### Engineer Features
 
 ```python
-# SHAP ranking (top 5):
-# 1. ai_trust_score (mean |SHAP| = 2.001)
-# 2. ai_complex_rating (mean |SHAP| = 1.661)
-# 3. ai_usage_freq (mean |SHAP| = 1.185)
-# 4. trust_verification_flag (mean |SHAP| = 0.963) ✓
-# 5. ai_full_dependency (mean |SHAP| = 0.178)
-#
-# Rank stability: ρ = 1.000 across 10 seeds ✓
+from src.feature_engineering import engineer_all_features
+
+df_features = engineer_all_features(df)
+print(f"Engineered features: {df_features.shape}")
 ```
 
-#### H3: Cross-Domain Generalization
+### Train Models
 
 ```python
-# Cross-dataset Macro-F1:
-# COB-ML Ensemble: 0.762 (best)
-# RoBERTa: 0.747
-# XGBoost: 0.446
-#
-# Friedman χ² = 8.857, p = 0.012 ✓
-```
+from src.train import main
 
-#### H4: Physiological Construct Validity
-
-```python
-# WESAD ICC(A,1) subject-level: 0.611 (p = 0.008) ✓
-# STEW ICC(A,1) window-level: 0.964 (p < 0.001) ✓
-# Pearson r (WESAD): 0.604 (p = 0.017) ✓
-# Pearson r (STEW): 0.971 (p < 0.001) ✓
+# Run complete training pipeline
+main()
 ```
 
 ---
 
-## 📈 Results Summary
+## Results Summary
 
-### Model Performance (Macro-F1)
+### Model Performance
 
-| Model | IID | Temporal | Cross-DS | ΔF1 |
-|-------|-----|----------|----------|-----|
-| Logistic Regression | 0.544 | 0.526 | 0.382 | −0.162 |
-| Random Forest | 0.571 | 0.535 | 0.446 | −0.125 |
-| XGBoost | 0.564 | 0.467 | 0.446 | −0.118 |
-| LightGBM | 0.575 | 0.491 | 0.446 | −0.129 |
-| TabNet | 0.553 | 0.531 | 0.498 | −0.055 |
-| LSTM | 0.553 | 0.437 | 0.402 | −0.151 |
-| **RoBERTa** | **0.747** | **0.747** | **0.747** | **0.000** |
-| **COB-ML Ensemble** | **0.577** | **0.469** | **0.762** | **+0.185** |
+| Model | MCC | Macro-F1 | Kappa |
+|-------|-----|----------|-------|
+| Logistic Regression | 0.329 | 0.544 | 0.328 |
+| XGBoost | 0.428 | 0.615 | 0.427 |
+| LightGBM | 0.431 | 0.617 | 0.430 |
+| RoBERTa | 0.512 | 0.747 | 0.511 |
+| **COB-ML Ensemble** | **0.577** | **0.762** | **0.576** |
 
-### SHAP Feature Importance (Top 10)
+### Top Predictive Features (SHAP)
 
-![SHAP Importance](paper/figures/shap_importance_clean.png)
+1. **trust_verification_flag** - Seeks human verification when distrusts AI
+2. ai_trust_score - Overall trust in AI accuracy
+3. ai_full_dependency - "No longer need humans" indicator
+4. ai_usage_freq - Daily/weekly/monthly usage
+5. years_code_num - Professional experience
 
-### Occupational Parity Analysis
+### Physiological Validation
 
-**Disparate Impact Ratio: 0.913 ≥ 0.80 ✓ (Parity Confirmed)**
-
-![Occupational Parity](paper/figures/h5_parity_clean.png)
+- **WESAD (stress):** ICC(A,1) = 0.611
+- **STEW (EEG workload):** ICC(A,1) = 0.964
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
-COB-ML-IEEE-Access/
-├── README.md                       # This file
-├── LICENSE                         # CC BY 4.0
-├── CITATION.bib                    # BibTeX citation
-├── DATA_AVAILABILITY.md            # Dataset access instructions
-├── requirements.txt                # Python dependencies
-├── environment.yml                 # Conda environment
-│
-├── paper/                          # LaTeX source and PDF
-│   ├── main.tex                    # Full paper source
-│   ├── main.pdf                    # Compiled PDF
-│   └── figures/                    # All paper figures
-│       ├── cobml_framework_final.png
-│       ├── shap_importance_clean.png
-│       ├── shap_dependence_clean.png
-│       ├── confusion_matrices_4x2.png
-│       ├── h3_generalization_bars.png
-│       ├── h4_construct_validity.png
-│       ├── icc_heatmap_vertical.png
-│       └── h5_parity_clean.png
-│
-└── notebooks/                      # Experimental pipeline
-    └── COB_ML_Experiments.ipynb    # Full reproducible notebook
+COB-ML/
+├── README.md
+├── requirements.txt
+├── environment.yml
+├── DATA_AVAILABILITY.md
+├── LICENSE
+├── src/
+│   ├── data_loading.py          # Dataset loading
+│   ├── feature_engineering.py   # 6-layer architecture
+│   ├── evaluation.py            # Metrics
+│   └── train.py                 # Training pipeline
+└── paper/
+    └── figures/                 # Visualization outputs
 ```
 
 ---
 
-## 📝 Citation
+## License
 
-If you use this work in your research, please cite:
+Code and implementation: **MIT License**
 
-```bibtex
-@article{nobles2025cobml,
-  title={Quantifying Human Cognitive Offloading in AI-Integrated Professional Environments Through Explainable Hybrid Learning},
-  author={Nobles, Calvin and Quaye, Samson},
-  journal={IEEE Access},
-  year={2025},
-  volume={},
-  pages={},
-  doi={}
-}
-```
+See [LICENSE](LICENSE) file for details.
 
 ---
 
-## 🔬 Key Contributions
+## Contact
 
-1. **First multi-source framework** combining survey self-report, AI conversation logs, and physiological ground truth for cognitive offloading measurement
+**Calvin Nobles** – cn8972@gmail.com  
+**Samson Quaye** – squaye@hawk.illinoistech.edu
 
-2. **Six-layer behavioral feature architecture** operationalizing the adaptive vs. maladaptive offloading distinction at the feature level
-
-3. **Physiologically validated** against WESAD stress labels and STEW EEG workload measures (ICC ≥ 0.60)
-
-4. **Practical organizational value:** Trust disposition, not usage frequency, predicts maladaptive offloading—challenging prevailing assumptions about AI adoption metrics
+For questions about the framework or datasets, please open an issue or contact the authors directly.
 
 ---
 
-## 📧 Contact
+## Acknowledgments
 
-- **Calvin Nobles** – cn8972@gmail.com
-- **Samson Quaye** – squaye@hawk.illinoistech.edu
-
----
-
-## 📜 License
-
-This work is licensed under a [Creative Commons Attribution 4.0 International License](LICENSE).
-
-The code and data processing pipeline are released under the MIT License for maximum reusability.
-
----
-
-## 🙏 Acknowledgments
-
-Experiments were conducted on Google Colab with A100 GPU access. We thank the Stack Overflow community, Allen Institute for AI (WildChat-1M), LMSYS (Chat-1M), and the authors of WESAD and STEW datasets for making their data publicly available.
-
----
-
-**⭐ If you find this work useful, please consider starring this repository!**
+This research builds upon publicly available datasets:
+- Stack Overflow Developer Survey
+- WildChat-1M (Allen Institute for AI)
+- LMSYS-Chat-1M
+- WESAD (University of Siegen)
+- STEW (Nanyang Technological University)
