@@ -14,13 +14,16 @@ This document provides detailed instructions for accessing all five datasets use
 | WESAD | 55,154 windows | Physiological (PKL) | Public | Attribution 4.0 |
 | STEW | 14,208 windows | EEG (TXT) | Public | CC BY 4.0 |
 
-**Total Dataset Size:** ~4.2 GB (compressed)
+**Total Dataset Size:** Several GB, depending on compression format, selected mirrors, and local preprocessing outputs.
+
+Raw third-party datasets are not redistributed in this repository. Users should download each dataset directly from the official source listed below and follow the terms of use for each dataset.
 
 ---
 
 ## 1️⃣ Stack Overflow Developer Survey (2024–2025)
 
 ### Description
+
 Annual survey of professional developers covering AI tool usage, trust calibration, verification habits, and occupational demographics.
 
 ### Access Method
@@ -44,6 +47,7 @@ df_2025["survey_year"] = 2025
 ```
 
 ### Citation
+
 ```bibtex
 @misc{stackoverflow2024,
   title={Stack Overflow Developer Survey 2024},
@@ -58,6 +62,7 @@ df_2025["survey_year"] = 2025
 ## 2️⃣ WildChat-1M
 
 ### Description
+
 Real ChatGPT conversations from 837,989 naturalistic user sessions.
 
 ### Access Method
@@ -65,13 +70,14 @@ Real ChatGPT conversations from 837,989 naturalistic user sessions.
 ```python
 from datasets import load_dataset
 
-# Load dataset (~2.5 GB download)
+# Load dataset
 wildchat = load_dataset("allenai/WildChat-1M", split="train")
 ```
 
-**Web:** [HuggingFace Dataset](https://huggingface.co/datasets/allenai/WildChat-1M)
+**Web:** [Hugging Face Dataset](https://huggingface.co/datasets/allenai/WildChat-1M)
 
 ### Citation
+
 ```bibtex
 @inproceedings{zhao2024wildchat,
   title={WildChat: 1M ChatGPT Interaction Logs in the Wild},
@@ -86,6 +92,7 @@ wildchat = load_dataset("allenai/WildChat-1M", split="train")
 ## 3️⃣ LMSYS-Chat-1M
 
 ### Description
+
 One million conversations across 25 language models.
 
 ### Access Method
@@ -93,13 +100,14 @@ One million conversations across 25 language models.
 ```python
 from datasets import load_dataset
 
-# Load dataset (~3.2 GB download)
+# Load dataset
 lmsys = load_dataset("lmsys/lmsys-chat-1m", split="train")
 ```
 
-**Web:** [HuggingFace Dataset](https://huggingface.co/datasets/lmsys/lmsys-chat-1m)
+**Web:** [Hugging Face Dataset](https://huggingface.co/datasets/lmsys/lmsys-chat-1m)
 
 ### Citation
+
 ```bibtex
 @article{zheng2023lmsys,
   title={LMSYS-Chat-1M: A Large-Scale Real-World LLM Conversation Dataset},
@@ -114,17 +122,20 @@ lmsys = load_dataset("lmsys/lmsys-chat-1m", split="train")
 ## 4️⃣ WESAD (Wearable Stress and Affect Detection)
 
 ### Description
+
 Multimodal physiological recordings from 15 subjects under validated stress conditions.
 
 ### Access Method
 
 **Direct Download:**
+
 ```bash
 wget https://uni-siegen.sciebo.de/s/pYjSgfOVs6Ntahr/download -O WESAD.zip
 unzip WESAD.zip
 ```
 
 **Kaggle Alternative:**
+
 ```bash
 kaggle datasets download -d orvile/wesad-wearable-stress-affect-detection-dataset
 ```
@@ -134,18 +145,19 @@ kaggle datasets download -d orvile/wesad-wearable-stress-affect-detection-datase
 ```python
 import pickle
 
-def load_wesad_subject(subject_id='S2'):
-    with open(f'WESAD/WESAD/{subject_id}/{subject_id}.pkl', 'rb') as f:
-        data = pickle.load(f, encoding='latin1')
+def load_wesad_subject(subject_id="S2"):
+    with open(f"WESAD/WESAD/{subject_id}/{subject_id}.pkl", "rb") as f:
+        data = pickle.load(f, encoding="latin1")
     return data
 
 # Structure:
-# data['signal']['chest'] → EDA, ECG, EMG, Temp, Resp
-# data['signal']['wrist'] → ACC, BVP, EDA, TEMP
-# data['label'] → stress labels
+# data["signal"]["chest"] → EDA, ECG, EMG, Temp, Resp
+# data["signal"]["wrist"] → ACC, BVP, EDA, TEMP
+# data["label"] → stress labels
 ```
 
 ### Citation
+
 ```bibtex
 @inproceedings{schmidt2018wesad,
   title={Introducing WESAD, a Multimodal Dataset for Wearable Stress and Affect Detection},
@@ -161,14 +173,16 @@ def load_wesad_subject(subject_id='S2'):
 ## 5️⃣ STEW (Simultaneous Task EEG Workload Dataset)
 
 ### Description
+
 EEG recordings from 48 subjects during rest and high-workload conditions.
 
 ### Access Method
 
-**IEEE DataPort (requires free account):**
+**IEEE DataPort:**
+
 1. Visit: [https://dx.doi.org/10.21227/44r8-ya50](https://dx.doi.org/10.21227/44r8-ya50)
-2. Create free IEEE DataPort account
-3. Download: `STEW Dataset.zip` (~380 MB)
+2. Create a free IEEE DataPort account if required
+3. Download: `STEW Dataset.zip`
 
 ### Loading in Python
 
@@ -176,13 +190,14 @@ EEG recordings from 48 subjects during rest and high-workload conditions.
 import numpy as np
 
 # Load EEG data (14 channels × N samples)
-eeg_data = np.loadtxt('STEW Dataset/sub01_lo.txt')
+eeg_data = np.loadtxt("STEW Dataset/sub01_lo.txt")
 
 # Sampling rate: 128 Hz
-# Window size: 256 samples (2 seconds)
+# Window size used in COB-ML: 256 samples
 ```
 
 ### Citation
+
 ```bibtex
 @article{lim2018stew,
   title={STEW: Simultaneous Task EEG Workload Data Set},
@@ -197,37 +212,48 @@ eeg_data = np.loadtxt('STEW Dataset/sub01_lo.txt')
 
 ---
 
-## 🔧 Pre-Processing Pipeline
+## 🔧 Preprocessing Pipeline
 
-All preprocessing steps are documented in: `notebooks/COB_ML_Experiments.ipynb`
+Preprocessing is implemented in the source modules included in this repository:
+
+- `src/data_loading.py` — dataset loading and local path handling
+- `src/feature_engineering.py` — six-layer behavioral feature construction and COI proxy variables
+- `src/train.py` — model training workflow
+- `src/evaluation.py` — metrics, physiological validation, and parity checks
 
 ### Processing Summary
 
 **Stack Overflow:**
-- 6-layer feature engineering
+
+- Six-layer feature engineering
 - COI proxy score computation
-- Tertile-based labeling (Low/Medium/High)
+- Tertile-based labeling: Low, Medium, and High
 
 **WildChat & LMSYS:**
+
+- Role-based message parsing
 - Turn-count extraction
 - Length ratio: `user_input_length / ai_output_length`
 - Single-turn acceptance flagging
-- Model tier encoding (GPT-4=3, GPT-3.5=2, Open-source=1)
+- Model tier encoding where available
 
 **WESAD:**
-- Sliding windows (700 samples, 50% overlap)
-- Statistical features: mean, std, range, skewness
+
+- Sliding windows: 700 samples with 50% overlap
+- Statistical features: mean, standard deviation, range, and skewness
 - Subject-wise splitting
 
 **STEW:**
-- Sliding windows (256 samples, 50% overlap)  
-- 14-channel EEG feature extraction
-- Balanced rest vs. high-workload conditions
+
+- Sliding windows: 256 samples with 50% overlap
+- Fourteen-channel EEG feature extraction
+- Balanced rest versus high-workload conditions
 
 ---
 
 ## 📧 Data Issues or Questions?
 
 Contact the authors:
-- **Calvin Nobles** – cn8972@gmail.com
-- **Samson Quaye** – squaye@hawk.illinoistech.edu
+
+- **Calvin Nobles** — calvin.nobles@umgc.edu
+- **Samson Quaye** — squaye@hawk.illinoistech.edu
