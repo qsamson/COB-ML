@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+title: "COB-ML: Cognitive Offloading Behavioral Machine Learning"
+message: "If you use this repository, please cite this software. The associated manuscript citation will be added after publication."
+type: software
+authors:
+  - family-names: Nobles
+    given-names: Calvin
+    orcid: "https://orcid.org/0000-0003-4002-1108"
+    affiliation: "School of Cybersecurity and Information Technology, University of Maryland Global Campus (UMGC)"
+  - family-names: Quaye
+    given-names: Samson
+    orcid: "https://orcid.org/0009-0003-1292-3419"
+    affiliation: "Center for Cybersecurity and Forensic Education (C²SAFE), Illinois Institute of Technology"
+repository-code: "https://github.com/qsamson/COB-ML"
+license: MIT
+keywords:
+  - cognitive offloading
+  - human-AI interaction
+  - explainable machine learning
+  - behavioral analytics
+  - physiological validation
